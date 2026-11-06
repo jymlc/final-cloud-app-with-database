@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>{% block title %}OnlineCourse{% endblock %}</title>
+  <style>
+    body { margin: 0; color: #17263a; background: #f2f6fb; font: 16px/1.5 system-ui, sans-serif; }
+    header { background: #152d49; color: white; padding: 14px max(24px, calc((100% - 960px)/2)); white-space: nowrap; }
+    header a { color: white; text-decoration: none; font-weight: 700; }
+    main { max-width: 960px; margin: 0 auto; padding: 26px 24px 40px; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    .card { background: white; border: 1px solid #d9e4ef; border-radius: 10px; padding: 14px 18px; margin: 0 0 12px; }
+    .alert-success { background: #dbf4e8; color: #124f37; padding: 14px 18px; border-radius: 10px; margin-bottom: 18px; }
+    .alert-warning { background: #fff0cc; padding: 14px 18px; border-radius: 10px; margin-bottom: 18px; }
+    .eyebrow { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: #456481; margin-bottom: 6px; }
+    .answer { margin: 3px 0; }
+    .correct { color: #126641; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header><a href="{% url 'onlinecourse:index' %}">OnlineCourse</a></header>
+  <main class="container">{% block content %}{% endblock %}</main>
+</body>
+</html>
