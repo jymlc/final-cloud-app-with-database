@@ -1,0 +1,33 @@
+name: Verify Django assessment and capture screenshots
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  assessment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt playwright
+      - run: python -m playwright install --with-deps chromium
+      - name: Check and initialize Django
+        run: |
+          python manage.py check
+          python manage.py makemigrations onlinecourse
+          python manage.py migrate
+          python verify_assessment.py seed
+      - name: Capture screenshots from the live app
+        run: |
+          python manage.py runserver 127.0.0.1:8000 --noreload > django.log 2>&1 &
+          trap 'cat django.log' EXIT
+          curl --fail --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:8000/admin/login/ > /dev/null
+          python verify_assessment.py capture
+      - uses: actions/upload-artifact@v4
+        with:
+          name: django-assessment-screenshots
+          path: screenshots/*.png
+          if-no-files-found: error
