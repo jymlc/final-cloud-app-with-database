@@ -66,6 +66,8 @@ def capture():
     output = Path('screenshots')
     output.mkdir(exist_ok=True)
     course = Course.objects.get(name='Database Foundations')
+    lessons = list(course.lesson_set.all())
+    correct_choices = list(Choice.objects.filter(question__lesson__course=course, is_correct=True))
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         admin = browser.new_page(viewport={'width': 1360, 'height': 900})
@@ -83,9 +85,9 @@ def capture():
         student.locator('#psw').fill(PASSWORD)
         student.locator('form').filter(has=student.locator('#username')).get_by_role('button', name='Login').click()
         student.goto(f'{BASE}/onlinecourse/{course.pk}/', wait_until='domcontentloaded')
-        for lesson in course.lesson_set.all():
+        for lesson in lessons:
             expect(student.get_by_role('heading', name=f'Lesson {lesson.order} · {lesson.title}')).to_be_visible()
-        for choice in Choice.objects.filter(question__lesson__course=course, is_correct=True):
+        for choice in correct_choices:
             student.get_by_role('checkbox', name=choice.choice_text, exact=True).check()
         student.get_by_role('button', name='Submit exam').click()
         expect(student.get_by_role('heading', name='Congratulations!')).to_be_visible()
